@@ -1,17 +1,17 @@
 import 'reflect-metadata';
 import 'dotenv/config';
 import express from 'express';
+import { connection } from './db/connection';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
-import { HelloResolver } from './resolvers/hello';
-
+import { HelloResolver } from './resolvers/hello'
 
 const app = express();
 const { PORT } = process.env;
 
 const main = async () => {
 
-    // create a database connection here
+    connection();
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
