@@ -1,9 +1,12 @@
+import 'dotenv/config';
 import { Lecturer } from "../entity/Lecturer";
-import { LecturerResponse } from '../utils/errors';
+import { LecturerResponse } from '../utils/errorHandler';
 import { getManager } from 'typeorm';
-import { RegisterInput } from '../utils/registerInput';
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { LoginInput } from "../utils/loginInput";
+import { RegisterInput } from '../utils/registerHandler';
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { LoginInput, LoginResponse } from "../utils/loginHandler";
+import { AppContext } from '../utils/context';
+import { createAccessToken, createRefreshToken } from '../auth/auth';
 
 @Resolver()
 export class LecturerResolver {
@@ -32,8 +35,8 @@ export class LecturerResolver {
 				return {
 						errors: [
 								{
-										field: 'Email',
-										message: 'Invalid input'
+									field: 'Email',
+									message: 'User already exists'
 								}
 						]
 				}
@@ -43,27 +46,26 @@ export class LecturerResolver {
 		const fullname = `${input.forenames} ${input.surname}`
 
 		const lecturer = em.create(Lecturer, {
-				forenames: input.forenames,
-				emailAddress: input.email,
-				dateOfBirth: input.dateOfBirth,
-				surname: input.surname,
-				firstName: firstname,
-				fullName: fullname
+			forenames: input.forenames,
+			emailAddress: input.email,
+			dateOfBirth: input.dateOfBirth,
+			surname: input.surname,
+			firstName: firstname,
+			fullName: fullname
 		});
 
 		await em.save(lecturer);
 
 		return {
-				lecturer
+			lecturer
 		}
 	}
 
-	// login a lecturer with their surname and email
-	// return a token back or a boolean
-	@Mutation(() => LecturerResponse)
+	@Mutation(() => LoginResponse)
 	async loginLecturer(
-		@Arg('input') input: LoginInput
-	): Promise<LecturerResponse> {
+		@Arg('input') input: LoginInput,
+		@Ctx() { res }: AppContext
+	): Promise<LoginResponse> {
 
 		const em = getManager();
 
@@ -74,19 +76,19 @@ export class LecturerResolver {
 		});
 
 		if (!lecturer) {
-			return {
-				errors: [
-					{
-						message: "Invalid email or surname"
-					}
-				]
-			}
+			throw new Error('Invalid email or surname');
 		}
 
-		// for now just return the lecturer
-		// will add token middleware later
+		// return an access and refresh token
+
+		res.cookie('rememberme',
+			createRefreshToken(lecturer), {
+				httpOnly: true
+			}
+		)
+
 		return {
-			lecturer
+			accessToken: createAccessToken(lecturer)
 		}
 
 	}
