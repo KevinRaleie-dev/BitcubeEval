@@ -5,6 +5,7 @@ import { connection } from './db/connection';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { HelloResolver } from './resolvers/hello'
+import { LecturerResolver } from './resolvers/lecturer';
 
 const app = express();
 const { PORT } = process.env;
@@ -16,10 +17,12 @@ const main = async () => {
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [
-                HelloResolver
+                HelloResolver,
+                LecturerResolver
             ],
-            validate: false
+            validate: false,
         }),
+        context: ({ req, res }) => ({ req, res })
     });
 
     apolloServer.applyMiddleware({app});
