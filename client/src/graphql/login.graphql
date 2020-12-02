@@ -1,0 +1,5 @@
+mutation LoginLecturer($surname: String!, $email: String!) {
+    loginLecturer(input: { email: $email, surname: $surname }) {
+        accessToken
+    }
+}

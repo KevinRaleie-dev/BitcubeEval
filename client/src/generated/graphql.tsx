@@ -98,6 +98,20 @@ export type HelloQuery = (
   & Pick<Query, 'hello'>
 );
 
+export type LoginLecturerMutationVariables = Exact<{
+  surname: Scalars['String'];
+  email: Scalars['String'];
+}>;
+
+
+export type LoginLecturerMutation = (
+  { __typename?: 'Mutation' }
+  & { loginLecturer: (
+    { __typename?: 'LoginResponse' }
+    & Pick<LoginResponse, 'accessToken'>
+  ) }
+);
+
 export type RegisterLecturerMutationVariables = Exact<{
   email: Scalars['String'];
   dateOfBirth: Scalars['DateTime'];
@@ -151,6 +165,39 @@ export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Hell
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export const LoginLecturerDocument = gql`
+    mutation LoginLecturer($surname: String!, $email: String!) {
+  loginLecturer(input: {email: $email, surname: $surname}) {
+    accessToken
+  }
+}
+    `;
+export type LoginLecturerMutationFn = Apollo.MutationFunction<LoginLecturerMutation, LoginLecturerMutationVariables>;
+
+/**
+ * __useLoginLecturerMutation__
+ *
+ * To run a mutation, you first call `useLoginLecturerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginLecturerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginLecturerMutation, { data, loading, error }] = useLoginLecturerMutation({
+ *   variables: {
+ *      surname: // value for 'surname'
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useLoginLecturerMutation(baseOptions?: Apollo.MutationHookOptions<LoginLecturerMutation, LoginLecturerMutationVariables>) {
+        return Apollo.useMutation<LoginLecturerMutation, LoginLecturerMutationVariables>(LoginLecturerDocument, baseOptions);
+      }
+export type LoginLecturerMutationHookResult = ReturnType<typeof useLoginLecturerMutation>;
+export type LoginLecturerMutationResult = Apollo.MutationResult<LoginLecturerMutation>;
+export type LoginLecturerMutationOptions = Apollo.BaseMutationOptions<LoginLecturerMutation, LoginLecturerMutationVariables>;
 export const RegisterLecturerDocument = gql`
     mutation RegisterLecturer($email: String!, $dateOfBirth: DateTime!, $forenames: String!, $surname: String!) {
   registerLecturer(
