@@ -1,0 +1,12 @@
+mutation RegisterLecturer($email: String!, $dateOfBirth: DateTime!, $forenames: String!,$surname: String!) {
+    registerLecturer(input: {email: $email, dateOfBirth: $dateOfBirth, forenames: $forenames, surname: $surname}) {
+            errors {
+                field
+                message
+            }
+            lecturer {
+                id
+                firstName
+            }
+        }
+    }

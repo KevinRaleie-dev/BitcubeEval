@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Button, Container, FormControl, FormLabel, Heading, Input, Text } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { useRegisterLecturerMutation } from '../generated/graphql';
 
 interface FormData {
 	forenames: string;
@@ -11,9 +12,19 @@ interface FormData {
 
 export const Register: React.FC = ()=> {
 	const { register, handleSubmit } = useForm<FormData>();
+	const [regLecturer] = useRegisterLecturerMutation();
 
-	const onSubmit = handleSubmit(({ forenames, surname, email, dateOfBirth }) => {
-		console.log(forenames, surname, email, dateOfBirth);
+	const onSubmit =  handleSubmit( async ({ forenames, surname, email, dateOfBirth }) => {
+		const response = await regLecturer({
+			variables: {
+				email,
+				forenames,
+				surname,
+				dateOfBirth	
+			}
+		})
+
+		console.log(response);
 	});
 
 	return (

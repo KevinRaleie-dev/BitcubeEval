@@ -98,6 +98,28 @@ export type HelloQuery = (
   & Pick<Query, 'hello'>
 );
 
+export type RegisterLecturerMutationVariables = Exact<{
+  email: Scalars['String'];
+  dateOfBirth: Scalars['DateTime'];
+  forenames: Scalars['String'];
+  surname: Scalars['String'];
+}>;
+
+
+export type RegisterLecturerMutation = (
+  { __typename?: 'Mutation' }
+  & { registerLecturer: (
+    { __typename?: 'LecturerResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, lecturer?: Maybe<(
+      { __typename?: 'Lecturer' }
+      & Pick<Lecturer, 'id' | 'firstName'>
+    )> }
+  ) }
+);
+
 
 export const HelloDocument = gql`
     query Hello {
@@ -129,3 +151,47 @@ export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Hell
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export const RegisterLecturerDocument = gql`
+    mutation RegisterLecturer($email: String!, $dateOfBirth: DateTime!, $forenames: String!, $surname: String!) {
+  registerLecturer(
+    input: {email: $email, dateOfBirth: $dateOfBirth, forenames: $forenames, surname: $surname}
+  ) {
+    errors {
+      field
+      message
+    }
+    lecturer {
+      id
+      firstName
+    }
+  }
+}
+    `;
+export type RegisterLecturerMutationFn = Apollo.MutationFunction<RegisterLecturerMutation, RegisterLecturerMutationVariables>;
+
+/**
+ * __useRegisterLecturerMutation__
+ *
+ * To run a mutation, you first call `useRegisterLecturerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterLecturerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerLecturerMutation, { data, loading, error }] = useRegisterLecturerMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      dateOfBirth: // value for 'dateOfBirth'
+ *      forenames: // value for 'forenames'
+ *      surname: // value for 'surname'
+ *   },
+ * });
+ */
+export function useRegisterLecturerMutation(baseOptions?: Apollo.MutationHookOptions<RegisterLecturerMutation, RegisterLecturerMutationVariables>) {
+        return Apollo.useMutation<RegisterLecturerMutation, RegisterLecturerMutationVariables>(RegisterLecturerDocument, baseOptions);
+      }
+export type RegisterLecturerMutationHookResult = ReturnType<typeof useRegisterLecturerMutation>;
+export type RegisterLecturerMutationResult = Apollo.MutationResult<RegisterLecturerMutation>;
+export type RegisterLecturerMutationOptions = Apollo.BaseMutationOptions<RegisterLecturerMutation, RegisterLecturerMutationVariables>;
