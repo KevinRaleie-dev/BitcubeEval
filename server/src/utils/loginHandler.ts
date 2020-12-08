@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "type-graphql";
+import { Field, InputType } from "type-graphql";
 
 @InputType()
 export class LoginInput {
@@ -8,11 +8,4 @@ export class LoginInput {
 
     @Field()
     email: string;
-}
-
-@ObjectType()
-export class LoginResponse {
-
-    @Field()
-    accessToken: string;
 }

@@ -1,35 +1,50 @@
 import 'reflect-metadata';
 import 'dotenv/config';
 import express from 'express';
+import refreshToken from './routes/refresh.route';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import { connection } from './db/connection';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { HelloResolver } from './resolvers/hello'
 import { LecturerResolver } from './resolvers/lecturer';
+import { StudentResolver } from './resolvers/student';
+import { DegreeResolver } from './resolvers/degree';
+import { CourseResolver } from './resolvers/course';
 
 const app = express();
-const { PORT } = process.env;
+const { PORT, CLIENT_URL } = process.env;
 
 const main = async () => {
 
-    connection();
+	app.use(cors({
+		origin: CLIENT_URL,
+		credentials: true
+	}));
+	connection();
+	app.use(cookieParser());
+	app.use('/refresh_token', refreshToken);
 
-    const apolloServer = new ApolloServer({
-        schema: await buildSchema({
-            resolvers: [
-                HelloResolver,
-                LecturerResolver
-            ],
-            validate: false,
-        }),
-        context: ({ req, res }) => ({ req, res })
-    });
+	const apolloServer = new ApolloServer({
+			schema: await buildSchema({
+					resolvers: [
+						HelloResolver,
+						LecturerResolver,
+						StudentResolver,
+						DegreeResolver,
+						CourseResolver
+					],
+					validate: false,
+			}),
+			context: ({ req, res }) => ({ req, res })
+	});
 
-    apolloServer.applyMiddleware({app});
+	apolloServer.applyMiddleware({ app, cors: false });
 
-    app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}${apolloServer.graphqlPath}`);
-    });
+	app.listen(PORT, () => {
+		console.log(`Server is running on http://localhost:${PORT}${apolloServer.graphqlPath}`);
+	});
 
 }
 

@@ -20,7 +20,7 @@ export const connection = async () => {
                 Course
             ],
             synchronize: true,
-            logging: true,
+            logging: false,
         })
 
     } catch (error) {

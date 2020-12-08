@@ -3,25 +3,42 @@ import { Lecturer } from "../entity/Lecturer";
 import { LecturerResponse } from '../utils/errorHandler';
 import { getManager } from 'typeorm';
 import { RegisterInput } from '../utils/registerHandler';
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
-import { LoginInput, LoginResponse } from "../utils/loginHandler";
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import { LoginInput } from "../utils/loginHandler";
+import { LoginResponse } from "../utils/errorHandler";
 import { AppContext } from '../utils/context';
 import { createAccessToken, createRefreshToken } from '../auth/auth';
+import { isAuth } from '../middleware/isAuth';
 
 @Resolver()
 export class LecturerResolver {
 
-	// register a lecturer using their forenames, email and surname
+	// Get all lecturers 
 	@Query(() => [Lecturer])
 	async lecturers ():Promise<Lecturer[]> {
 			
 		const em = getManager();
 
-		const lecturer = await em.find(Lecturer, {});
+		const lecturer = await em.find(Lecturer, { relations: ["degrees"]});
 
 		return lecturer;
 	}
 
+	// Get lecturer by their id
+	@Query(() => Lecturer, { nullable: true })
+	@UseMiddleware(isAuth)
+	async getLecturer(
+		@Ctx() {payload}: AppContext
+	): Promise<Lecturer | undefined> {
+		const em = getManager();
+
+		return await em.findOne(Lecturer, {
+			id: payload.id
+		}, {relations: ["degrees"]});
+
+	}
+
+	// Register a lecturer
 	@Mutation(() => LecturerResponse)
 		async registerLecturer(
 			@Arg('input') input: RegisterInput 
@@ -60,7 +77,8 @@ export class LecturerResolver {
 			lecturer
 		}
 	}
-
+	
+	// Login a lecturer
 	@Mutation(() => LoginResponse)
 	async loginLecturer(
 		@Arg('input') input: LoginInput,
@@ -76,7 +94,13 @@ export class LecturerResolver {
 		});
 
 		if (!lecturer) {
-			throw new Error('Invalid email or surname');
+			return {
+				errors: [
+					{
+						message: 'Invalid email or surname'
+					}
+				]
+			}
 		}
 
 		// return an access and refresh token
@@ -92,7 +116,4 @@ export class LecturerResolver {
 		}
 
 	}
-
-
-
 }

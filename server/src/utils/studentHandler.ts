@@ -1,7 +1,7 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType, Int } from "type-graphql";
 
 @InputType()
-export class RegisterInput {
+export class StudentInput {
 
     @Field()
     forenames: string;
@@ -14,4 +14,7 @@ export class RegisterInput {
 
     @Field()
     dateOfBirth: Date;
+
+    @Field(() =>  Int)
+    degreeID: number
 }

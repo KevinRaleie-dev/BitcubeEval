@@ -7,7 +7,7 @@ export const createAccessToken = (lecturer: Lecturer) => {
     const { ACCESS_TOKEN } = process.env;
 
     return sign({ id: lecturer.id}, ACCESS_TOKEN!, {
-        expiresIn: "5m"
+        expiresIn: "1d"
     })
 }
 
