@@ -1,20 +1,23 @@
-import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { Home } from './pages/Home';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
+import React from 'react'
+import Routes from './Routes'
+import { setAccessToken } from './token';
 
+export const App = () => {
+    const [loading, setLoading] = React.useState(true);
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/register" component={Register} />
-        <Route exact path="/login" component={Login} />
-      </Switch>
-    </BrowserRouter>
-  );
+    React.useEffect(() => {
+        fetch('http://localhost:4000/refresh_token', { method: 'POST', credentials: 'include'})
+            .then(async (data) => {
+                const {accessToken} = await data.json();
+                setAccessToken(accessToken);
+                setLoading(false);
+            });
+    }, []);
+
+    if(loading) {
+        return <div>loading...</div>
+    }
+    return (
+        <Routes />
+    )
 }
-
-export default App;
