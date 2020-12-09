@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Container, FormControl, FormLabel, Heading, Input, Text } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useRegisterLecturerMutation } from '../generated/graphql';
+import { RouteComponentProps } from 'react-router-dom';
 
 interface FormData {
 	forenames: string;
@@ -10,7 +11,7 @@ interface FormData {
 	dateOfBirth: string;
 }
 
-export const Register: React.FC = ()=> {
+export const Register: React.FC<RouteComponentProps> = ({history})=> {
 	const { register, handleSubmit } = useForm<FormData>();
 	const [regLecturer] = useRegisterLecturerMutation();
 
@@ -22,8 +23,9 @@ export const Register: React.FC = ()=> {
 				surname,
 				dateOfBirth	
 			}
-		})
+		});
 
+		history.push('/login');
 		console.log(response);
 	});
 

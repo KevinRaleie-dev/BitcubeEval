@@ -1,0 +1,6 @@
+query Degree {
+    getDegrees {
+        id
+        degreeName
+    }
+}

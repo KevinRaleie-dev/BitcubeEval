@@ -3,6 +3,7 @@ import { Container, Box, Heading, FormControl, Input, Button, Text } from '@chak
 import { useForm } from 'react-hook-form';
 import { RouteComponentProps } from 'react-router-dom';
 import { useLoginLecturerMutation } from '../generated/graphql';
+import { setAccessToken } from '../token';
 
 interface FormData {
     email: string;
@@ -21,7 +22,11 @@ export const Login: React.FC<RouteComponentProps> = ({history})=> {
             }
         });
 
-        history.push('/');
+        if(response && response.data) {
+            setAccessToken(response.data.loginLecturer.accessToken!);
+            history.push('/');
+        }
+
         console.log(response);
     });
 

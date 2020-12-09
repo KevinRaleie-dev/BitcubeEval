@@ -19,18 +19,29 @@ export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   lecturers: Array<Lecturer>;
+  getLecturer?: Maybe<Lecturer>;
+  getStudents: Array<Student>;
+  getDegrees: Array<Degree>;
+  getLecturerStudents?: Maybe<Array<Degree>>;
+  courses: Array<Course>;
+  getDegreeCourses?: Maybe<Array<Course>>;
+};
+
+
+export type QueryGetDegreeCoursesArgs = {
+  id: Scalars['Int'];
 };
 
 export type Lecturer = {
   __typename?: 'Lecturer';
-  id: Scalars['Float'];
+  id: Scalars['Int'];
   forenames: Scalars['String'];
   surname: Scalars['String'];
   emailAddress: Scalars['String'];
   dateOfBirth: Scalars['DateTime'];
   firstName: Scalars['String'];
   fullName: Scalars['String'];
-  degress: Array<Degree>;
+  degrees: Array<Degree>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
@@ -38,9 +49,36 @@ export type Lecturer = {
 
 export type Degree = {
   __typename?: 'Degree';
-  id: Scalars['Float'];
+  id: Scalars['Int'];
   degreeName: Scalars['String'];
-  durationInYears: Scalars['String'];
+  durationInYears: Scalars['Int'];
+  students?: Maybe<Array<Student>>;
+  lecturer?: Maybe<Lecturer>;
+  courses?: Maybe<Array<Course>>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type Student = {
+  __typename?: 'Student';
+  id: Scalars['Float'];
+  forenames: Scalars['String'];
+  surname: Scalars['String'];
+  emailAddress: Scalars['String'];
+  dateOfBirth: Scalars['DateTime'];
+  firstName: Scalars['String'];
+  fullName: Scalars['String'];
+  degree?: Maybe<Degree>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type Course = {
+  __typename?: 'Course';
+  id: Scalars['Float'];
+  courseName: Scalars['String'];
+  durationInMonths: Scalars['Int'];
+  degree?: Maybe<Degree>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
@@ -49,6 +87,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   registerLecturer: LecturerResponse;
   loginLecturer: LoginResponse;
+  addStudent: StudentResponse;
+  addDegree: Degree;
+  addCourse: Scalars['Boolean'];
 };
 
 
@@ -61,6 +102,21 @@ export type MutationLoginLecturerArgs = {
   input: LoginInput;
 };
 
+
+export type MutationAddStudentArgs = {
+  input: StudentInput;
+};
+
+
+export type MutationAddDegreeArgs = {
+  input: DegreeInput;
+};
+
+
+export type MutationAddCourseArgs = {
+  input: CourseInput;
+};
+
 export type LecturerResponse = {
   __typename?: 'LecturerResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -69,7 +125,7 @@ export type LecturerResponse = {
 
 export type FieldError = {
   __typename?: 'FieldError';
-  field: Scalars['String'];
+  field?: Maybe<Scalars['String']>;
   message: Scalars['String'];
 };
 
@@ -82,13 +138,50 @@ export type RegisterInput = {
 
 export type LoginResponse = {
   __typename?: 'LoginResponse';
-  accessToken: Scalars['String'];
+  errors?: Maybe<Array<FieldError>>;
+  accessToken?: Maybe<Scalars['String']>;
 };
 
 export type LoginInput = {
   surname: Scalars['String'];
   email: Scalars['String'];
 };
+
+export type StudentResponse = {
+  __typename?: 'StudentResponse';
+  errors?: Maybe<Array<FieldError>>;
+  student?: Maybe<Student>;
+};
+
+export type StudentInput = {
+  forenames: Scalars['String'];
+  email: Scalars['String'];
+  surname: Scalars['String'];
+  dateOfBirth: Scalars['DateTime'];
+  degreeID: Scalars['Int'];
+};
+
+export type DegreeInput = {
+  degreeName: Scalars['String'];
+  durationYears: Scalars['Int'];
+};
+
+export type CourseInput = {
+  degreeID: Scalars['Int'];
+  courseName: Scalars['String'];
+  durationMonths: Scalars['Int'];
+};
+
+export type DegreeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DegreeQuery = (
+  { __typename?: 'Query' }
+  & { getDegrees: Array<(
+    { __typename?: 'Degree' }
+    & Pick<Degree, 'id' | 'degreeName'>
+  )> }
+);
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -109,6 +202,10 @@ export type LoginLecturerMutation = (
   & { loginLecturer: (
     { __typename?: 'LoginResponse' }
     & Pick<LoginResponse, 'accessToken'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>> }
   ) }
 );
 
@@ -135,6 +232,39 @@ export type RegisterLecturerMutation = (
 );
 
 
+export const DegreeDocument = gql`
+    query Degree {
+  getDegrees {
+    id
+    degreeName
+  }
+}
+    `;
+
+/**
+ * __useDegreeQuery__
+ *
+ * To run a query within a React component, call `useDegreeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDegreeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDegreeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDegreeQuery(baseOptions?: Apollo.QueryHookOptions<DegreeQuery, DegreeQueryVariables>) {
+        return Apollo.useQuery<DegreeQuery, DegreeQueryVariables>(DegreeDocument, baseOptions);
+      }
+export function useDegreeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DegreeQuery, DegreeQueryVariables>) {
+          return Apollo.useLazyQuery<DegreeQuery, DegreeQueryVariables>(DegreeDocument, baseOptions);
+        }
+export type DegreeQueryHookResult = ReturnType<typeof useDegreeQuery>;
+export type DegreeLazyQueryHookResult = ReturnType<typeof useDegreeLazyQuery>;
+export type DegreeQueryResult = Apollo.QueryResult<DegreeQuery, DegreeQueryVariables>;
 export const HelloDocument = gql`
     query Hello {
   hello
@@ -168,6 +298,10 @@ export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariable
 export const LoginLecturerDocument = gql`
     mutation LoginLecturer($surname: String!, $email: String!) {
   loginLecturer(input: {email: $email, surname: $surname}) {
+    errors {
+      field
+      message
+    }
     accessToken
   }
 }
