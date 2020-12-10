@@ -28,7 +28,7 @@ const AddStudent = () => {
                 forenames,
                 dateOfBirth,
                 surname,
-                degreeID: degree
+                degreeID: degree // Enroll student to degree, way ahead of you
             }
         });
 
