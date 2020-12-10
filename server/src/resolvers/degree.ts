@@ -22,23 +22,6 @@ export class DegreeResolver {
         return degrees;
     }
 
-    // Filter through degrees and return only the lecturer with the provided id
-    @Query(() => [Degree], {nullable: true})
-    @UseMiddleware(isAuth)
-    async getLecturerStudents(
-        @Ctx() { payload }: AppContext
-    ): Promise<Degree[] | undefined> {
-        const degreeRepository = getRepository(Degree);
-        const degrees = await degreeRepository.find({
-            relations: ["lecturer", "students"]
-        });
-
-        const res = degrees.filter(degree => degree.lecturer?.id === payload.id);
-
-        return res;
-    } 
-
-
     // Create a degree
     @Mutation(() => Degree)
     @UseMiddleware(isAuth)

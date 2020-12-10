@@ -1,0 +1,9 @@
+query Students {
+    getLecturerStudents {
+        students {
+            id
+            fullName
+            emailAddress
+        }
+    }
+}

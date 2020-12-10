@@ -1,4 +1,5 @@
 import React from 'react'
+import Loading from './components/Loading';
 import Routes from './Routes'
 import { setAccessToken } from './token';
 
@@ -15,7 +16,7 @@ export const App = () => {
     }, []);
 
     if(loading) {
-        return <div>loading...</div>
+        return <Loading />
     }
     return (
         <Routes />

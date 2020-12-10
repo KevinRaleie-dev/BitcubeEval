@@ -20,9 +20,9 @@ export type Query = {
   hello: Scalars['String'];
   lecturers: Array<Lecturer>;
   getLecturer?: Maybe<Lecturer>;
+  getLecturerStudents?: Maybe<Array<Degree>>;
   getStudents: Array<Student>;
   getDegrees: Array<Degree>;
-  getLecturerStudents?: Maybe<Array<Degree>>;
   courses: Array<Course>;
   getDegreeCourses?: Maybe<Array<Course>>;
 };
@@ -172,6 +172,29 @@ export type CourseInput = {
   durationMonths: Scalars['Int'];
 };
 
+export type AddStudentMutationVariables = Exact<{
+  email: Scalars['String'];
+  dateOfBirth: Scalars['DateTime'];
+  forenames: Scalars['String'];
+  surname: Scalars['String'];
+  degreeID: Scalars['Int'];
+}>;
+
+
+export type AddStudentMutation = (
+  { __typename?: 'Mutation' }
+  & { addStudent: (
+    { __typename?: 'StudentResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, student?: Maybe<(
+      { __typename?: 'Student' }
+      & Pick<Student, 'id' | 'firstName'>
+    )> }
+  ) }
+);
+
 export type DegreeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -189,6 +212,20 @@ export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 export type HelloQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'hello'>
+);
+
+export type LecturerDegreesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LecturerDegreesQuery = (
+  { __typename?: 'Query' }
+  & { getLecturer?: Maybe<(
+    { __typename?: 'Lecturer' }
+    & { degrees: Array<(
+      { __typename?: 'Degree' }
+      & Pick<Degree, 'id' | 'degreeName'>
+    )> }
+  )> }
 );
 
 export type LoginLecturerMutationVariables = Exact<{
@@ -231,7 +268,66 @@ export type RegisterLecturerMutation = (
   ) }
 );
 
+export type StudentsQueryVariables = Exact<{ [key: string]: never; }>;
 
+
+export type StudentsQuery = (
+  { __typename?: 'Query' }
+  & { getLecturerStudents?: Maybe<Array<(
+    { __typename?: 'Degree' }
+    & { students?: Maybe<Array<(
+      { __typename?: 'Student' }
+      & Pick<Student, 'id' | 'fullName' | 'emailAddress'>
+    )>> }
+  )>> }
+);
+
+
+export const AddStudentDocument = gql`
+    mutation AddStudent($email: String!, $dateOfBirth: DateTime!, $forenames: String!, $surname: String!, $degreeID: Int!) {
+  addStudent(
+    input: {email: $email, dateOfBirth: $dateOfBirth, forenames: $forenames, surname: $surname, degreeID: $degreeID}
+  ) {
+    errors {
+      field
+      message
+    }
+    student {
+      id
+      firstName
+    }
+  }
+}
+    `;
+export type AddStudentMutationFn = Apollo.MutationFunction<AddStudentMutation, AddStudentMutationVariables>;
+
+/**
+ * __useAddStudentMutation__
+ *
+ * To run a mutation, you first call `useAddStudentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddStudentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addStudentMutation, { data, loading, error }] = useAddStudentMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      dateOfBirth: // value for 'dateOfBirth'
+ *      forenames: // value for 'forenames'
+ *      surname: // value for 'surname'
+ *      degreeID: // value for 'degreeID'
+ *   },
+ * });
+ */
+export function useAddStudentMutation(baseOptions?: Apollo.MutationHookOptions<AddStudentMutation, AddStudentMutationVariables>) {
+        return Apollo.useMutation<AddStudentMutation, AddStudentMutationVariables>(AddStudentDocument, baseOptions);
+      }
+export type AddStudentMutationHookResult = ReturnType<typeof useAddStudentMutation>;
+export type AddStudentMutationResult = Apollo.MutationResult<AddStudentMutation>;
+export type AddStudentMutationOptions = Apollo.BaseMutationOptions<AddStudentMutation, AddStudentMutationVariables>;
 export const DegreeDocument = gql`
     query Degree {
   getDegrees {
@@ -295,6 +391,41 @@ export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Hell
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export const LecturerDegreesDocument = gql`
+    query LecturerDegrees {
+  getLecturer {
+    degrees {
+      id
+      degreeName
+    }
+  }
+}
+    `;
+
+/**
+ * __useLecturerDegreesQuery__
+ *
+ * To run a query within a React component, call `useLecturerDegreesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLecturerDegreesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLecturerDegreesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLecturerDegreesQuery(baseOptions?: Apollo.QueryHookOptions<LecturerDegreesQuery, LecturerDegreesQueryVariables>) {
+        return Apollo.useQuery<LecturerDegreesQuery, LecturerDegreesQueryVariables>(LecturerDegreesDocument, baseOptions);
+      }
+export function useLecturerDegreesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LecturerDegreesQuery, LecturerDegreesQueryVariables>) {
+          return Apollo.useLazyQuery<LecturerDegreesQuery, LecturerDegreesQueryVariables>(LecturerDegreesDocument, baseOptions);
+        }
+export type LecturerDegreesQueryHookResult = ReturnType<typeof useLecturerDegreesQuery>;
+export type LecturerDegreesLazyQueryHookResult = ReturnType<typeof useLecturerDegreesLazyQuery>;
+export type LecturerDegreesQueryResult = Apollo.QueryResult<LecturerDegreesQuery, LecturerDegreesQueryVariables>;
 export const LoginLecturerDocument = gql`
     mutation LoginLecturer($surname: String!, $email: String!) {
   loginLecturer(input: {email: $email, surname: $surname}) {
@@ -376,3 +507,39 @@ export function useRegisterLecturerMutation(baseOptions?: Apollo.MutationHookOpt
 export type RegisterLecturerMutationHookResult = ReturnType<typeof useRegisterLecturerMutation>;
 export type RegisterLecturerMutationResult = Apollo.MutationResult<RegisterLecturerMutation>;
 export type RegisterLecturerMutationOptions = Apollo.BaseMutationOptions<RegisterLecturerMutation, RegisterLecturerMutationVariables>;
+export const StudentsDocument = gql`
+    query Students {
+  getLecturerStudents {
+    students {
+      id
+      fullName
+      emailAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useStudentsQuery__
+ *
+ * To run a query within a React component, call `useStudentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStudentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStudentsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useStudentsQuery(baseOptions?: Apollo.QueryHookOptions<StudentsQuery, StudentsQueryVariables>) {
+        return Apollo.useQuery<StudentsQuery, StudentsQueryVariables>(StudentsDocument, baseOptions);
+      }
+export function useStudentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StudentsQuery, StudentsQueryVariables>) {
+          return Apollo.useLazyQuery<StudentsQuery, StudentsQueryVariables>(StudentsDocument, baseOptions);
+        }
+export type StudentsQueryHookResult = ReturnType<typeof useStudentsQuery>;
+export type StudentsLazyQueryHookResult = ReturnType<typeof useStudentsLazyQuery>;
+export type StudentsQueryResult = Apollo.QueryResult<StudentsQuery, StudentsQueryVariables>;

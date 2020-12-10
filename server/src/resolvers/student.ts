@@ -71,11 +71,11 @@ export class StudentResolver {
             degree: input.degreeID as any
         });
         
+        await em.save(student);
+        
         degree.students = [];
         
         degree.students.push(student);
-
-        await em.save(student);
 
         await em.save(degree);
         

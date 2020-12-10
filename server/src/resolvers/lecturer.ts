@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Lecturer } from "../entity/Lecturer";
 import { LecturerResponse } from '../utils/errorHandler';
-import { getManager } from 'typeorm';
+import { getManager, getRepository } from 'typeorm';
 import { RegisterInput } from '../utils/registerHandler';
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { LoginInput } from "../utils/loginHandler";
@@ -9,6 +9,7 @@ import { LoginResponse } from "../utils/errorHandler";
 import { AppContext } from '../utils/context';
 import { createAccessToken, createRefreshToken } from '../auth/auth';
 import { isAuth } from '../middleware/isAuth';
+import { Degree } from '../entity/Degree';
 
 @Resolver()
 export class LecturerResolver {
@@ -37,6 +38,24 @@ export class LecturerResolver {
 		}, {relations: ["degrees"]});
 
 	}
+
+
+    // Filter through degrees and return only the lecturer with the provided id
+    @Query(() => [Degree], {nullable: true})
+    @UseMiddleware(isAuth)
+    async getLecturerStudents(
+        @Ctx() { payload }: AppContext
+    ): Promise<Degree[] | undefined> {
+        const degreeRepository = getRepository(Degree);
+        const degrees = await degreeRepository.find({
+            relations: ["lecturer", "students"]
+        });
+
+        const res = degrees.filter(degree => degree.lecturer?.id === payload.id);
+
+        return res;
+    } 
+
 
 	// Register a lecturer
 	@Mutation(() => LecturerResponse)

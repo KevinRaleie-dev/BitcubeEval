@@ -1,0 +1,12 @@
+mutation AddStudent($email: String!, $dateOfBirth: DateTime!, $forenames: String!, $surname: String!, $degreeID: Int!) {
+    addStudent(input: { email: $email, dateOfBirth: $dateOfBirth, forenames: $forenames, surname: $surname, degreeID: $degreeID }) {
+        errors {
+            field
+            message
+        }
+        student {
+            id
+            firstName
+        }
+    }
+}
