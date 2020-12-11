@@ -8,10 +8,5 @@ export class DegreeInput {
 
     @Field(() => Int)
     durationYears: number;
-
-    // @Field()
-    // courseName: string;
-
-    // @Field(() => Int)
-    // durationMonths: number;
+    
 }

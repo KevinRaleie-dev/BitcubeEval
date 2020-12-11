@@ -18,3 +18,4 @@ export class StudentInput {
     @Field(() =>  Int)
     degreeID: number
 }
+

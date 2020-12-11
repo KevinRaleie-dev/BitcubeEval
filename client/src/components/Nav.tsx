@@ -11,7 +11,7 @@ const Nav: React.FC<RouteComponentProps> = (props) => {
         color="black"
         borderBottomWidth='1px'
         >
-            <Link to="/home">
+            <Link to="/">
                 <Text 
                 fontSize='3xl' 
                 fontWeight='bold'

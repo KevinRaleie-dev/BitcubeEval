@@ -17,16 +17,16 @@ export const Dashboard: React.FC = ()=> {
     }
     return (
         <>
-        <Flex p={4}>
-            <Box>
-                <p>{data?.hello}</p>
-            </Box>
-            <Spacer />
-            <Box>
-                <AddStudent />
-            </Box>
-        </Flex>
-        <Container />
+            <Flex p={4}>
+                <Box>
+                    <p>{data?.hello}</p>
+                </Box>
+                <Spacer />
+                <Box>
+                    <AddStudent />
+                </Box>
+            </Flex>
+            <Container />
         </>
     );
 }
