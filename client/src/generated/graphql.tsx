@@ -88,6 +88,7 @@ export type Mutation = {
   registerLecturer: LecturerResponse;
   loginLecturer: LoginResponse;
   addStudent: StudentResponse;
+  removeStudent: Scalars['Boolean'];
   addDegree: Degree;
   addCourse: Scalars['Boolean'];
 };
@@ -105,6 +106,11 @@ export type MutationLoginLecturerArgs = {
 
 export type MutationAddStudentArgs = {
   input: StudentInput;
+};
+
+
+export type MutationRemoveStudentArgs = {
+  input: RemoveStudentInput;
 };
 
 
@@ -159,6 +165,10 @@ export type StudentInput = {
   surname: Scalars['String'];
   dateOfBirth: Scalars['DateTime'];
   degreeID: Scalars['Int'];
+};
+
+export type RemoveStudentInput = {
+  studentID: Scalars['Int'];
 };
 
 export type DegreeInput = {
@@ -266,6 +276,16 @@ export type RegisterLecturerMutation = (
       & Pick<Lecturer, 'id' | 'firstName'>
     )> }
   ) }
+);
+
+export type RemoveStudentMutationVariables = Exact<{
+  studentID: Scalars['Int'];
+}>;
+
+
+export type RemoveStudentMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'removeStudent'>
 );
 
 export type StudentsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -507,6 +527,36 @@ export function useRegisterLecturerMutation(baseOptions?: Apollo.MutationHookOpt
 export type RegisterLecturerMutationHookResult = ReturnType<typeof useRegisterLecturerMutation>;
 export type RegisterLecturerMutationResult = Apollo.MutationResult<RegisterLecturerMutation>;
 export type RegisterLecturerMutationOptions = Apollo.BaseMutationOptions<RegisterLecturerMutation, RegisterLecturerMutationVariables>;
+export const RemoveStudentDocument = gql`
+    mutation RemoveStudent($studentID: Int!) {
+  removeStudent(input: {studentID: $studentID})
+}
+    `;
+export type RemoveStudentMutationFn = Apollo.MutationFunction<RemoveStudentMutation, RemoveStudentMutationVariables>;
+
+/**
+ * __useRemoveStudentMutation__
+ *
+ * To run a mutation, you first call `useRemoveStudentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveStudentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeStudentMutation, { data, loading, error }] = useRemoveStudentMutation({
+ *   variables: {
+ *      studentID: // value for 'studentID'
+ *   },
+ * });
+ */
+export function useRemoveStudentMutation(baseOptions?: Apollo.MutationHookOptions<RemoveStudentMutation, RemoveStudentMutationVariables>) {
+        return Apollo.useMutation<RemoveStudentMutation, RemoveStudentMutationVariables>(RemoveStudentDocument, baseOptions);
+      }
+export type RemoveStudentMutationHookResult = ReturnType<typeof useRemoveStudentMutation>;
+export type RemoveStudentMutationResult = Apollo.MutationResult<RemoveStudentMutation>;
+export type RemoveStudentMutationOptions = Apollo.BaseMutationOptions<RemoveStudentMutation, RemoveStudentMutationVariables>;
 export const StudentsDocument = gql`
     query Students {
   getLecturerStudents {

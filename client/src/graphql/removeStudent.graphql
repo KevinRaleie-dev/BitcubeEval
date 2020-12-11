@@ -1,0 +1,3 @@
+mutation RemoveStudent($studentID: Int!) {
+    removeStudent(input: {studentID: $studentID})
+}

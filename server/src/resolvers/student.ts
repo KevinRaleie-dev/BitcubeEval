@@ -1,10 +1,11 @@
 import { Student } from "../entity/Student";
 import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
-import { getManager, getRepository } from "typeorm";
+import { getConnection, getManager, getRepository } from "typeorm";
 import { isAuth } from "../middleware/isAuth";
 import { StudentInput } from "../utils/studentHandler";
 import { StudentResponse } from "../utils/errorHandler";
 import { Degree } from "../entity/Degree";
+import { RemoveStudentInput } from "../utils/removeStudentHandler";
 
 @Resolver()
 export class StudentResolver {
@@ -28,6 +29,7 @@ export class StudentResolver {
         const em = getManager();
 
         const degree = await em.findOne(Degree, {
+            relations: ["students"],
             where: {
                 id: input.degreeID
             }
@@ -83,5 +85,35 @@ export class StudentResolver {
             student
         }
     }
+
+    // Remove student from a degree
+    @Mutation(() => Boolean)
+    @UseMiddleware(isAuth)
+    async removeStudent(
+        @Arg('input') input: RemoveStudentInput
+    ): Promise<Boolean> {
+        
+       const em = getManager();
+
+       const student = await em.findOne(Student, {
+           where: {
+               id: input.studentID
+           }
+       });
+
+       if(!student) {
+           return false;
+       }
+
+       await getConnection()
+            .createQueryBuilder()
+            .delete()
+            .from(Student)
+            .where("id = :id", {id: input.studentID})
+            .execute();
+        
+        return true;
+    }
+
 
 }
