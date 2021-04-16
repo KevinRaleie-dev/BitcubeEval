@@ -1,10 +1,9 @@
 import React from 'react';
-import { Container, Box, Heading, FormControl, Input, Button, Text } from '@chakra-ui/react';
+import { Container, Box, Heading, FormControl, Input, Button, Text, Flex, Spacer, Stack } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useLoginLecturerMutation } from '../generated/graphql';
 import { setAccessToken } from '../token';
-import Nav from '../components/Nav';
 
 interface FormData {
     email: string;
@@ -23,32 +22,52 @@ export const Login: React.FC<RouteComponentProps> = ({history})=> {
             }
         });
 
+        // need to sort out error handling
+
         if(response && response.data) {
             setAccessToken(response.data.loginLecturer.accessToken!);
             history.push('/dashboard');
         }
-
-        console.log(response);
+        
     });
 
     return (
         <>
-            <Nav />
-            <Container mt={10}>
-                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-                    <Heading>Lecturer's Portal</Heading>
-                    <Text>Welcome back 👋🏼.</Text>
-                </Box>
-                <form onSubmit={onSubmit}>
-                    <FormControl id="surname" isRequired mt={5}>
-                        <Input name="surname" placeholder="Surname"  ref={register}/>
-                    </FormControl>
-                    <FormControl id="email-address" isRequired mt={5}>
-                        <Input name="email" type="email" placeholder="Email Address" ref={register} />
-                    </FormControl>
-                    <Button type="submit" bg="#3B28CC" mt={5} colorScheme="blue">Sign In</Button>
-                </form>
-            </Container>
+            <Box
+            w="100vw"
+            h="100vh"
+            bgColor="#071e3d"
+            display="grid"
+            placeItems="center"
+            color="white"
+            >
+                <Container>
+                    <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+                        <Heading as="h1" mb={3}>Studently 👩🏽‍🎓</Heading>
+                        <Text color="gray.100" mb={5}>Sign in to access your dashboard.</Text>
+                    </Box>
+                    <form onSubmit={onSubmit}>
+                        <Stack spacing={5}>
+                            <FormControl id="surname" isRequired >
+                                <Input name="surname" placeholder="Surname"  ref={register}/>
+                            </FormControl>
+                            <FormControl id="email-address" isRequired >
+                                <Input name="email" type="email" placeholder="Email Address" ref={register} />
+                            </FormControl>
+                            <Flex>
+                                <Spacer />
+                                <Box
+                                >
+                                    <Link to="/register">
+                                        <Button variant="link" mr={5}>Sign up</Button>
+                                    </Link>
+                                    <Button type="submit" bg="#1f4287" colorScheme="#1f4287">Sign in</Button>
+                                </Box>
+                            </Flex>
+                        </Stack>
+                    </form>
+                </Container>
+            </Box>
         </>
     );
 }

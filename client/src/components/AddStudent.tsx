@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, FormControl, FormLabel, Input, Select, ScaleFade } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { FiPlus } from "react-icons/fi";
 import {useForm} from 'react-hook-form';
 import { useAddStudentMutation, useDegreeQuery } from '../generated/graphql';
 
@@ -38,7 +38,7 @@ const AddStudent = () => {
 
     return (
         <>
-            <Button leftIcon={<AddIcon />} onClick={onOpen}>Add Student</Button>
+            <Button leftIcon={<FiPlus />} bgColor="#21e6c1" colorScheme="#21e6c1" color="black" onClick={onOpen}>New student</Button>
             <ScaleFade initialScale={0.9} in={isOpen}>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />

@@ -1,7 +1,7 @@
 import { ChevronDownIcon, UpDownIcon } from '@chakra-ui/icons';
 import { Box, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Spacer, Text } from '@chakra-ui/react';
 import React from 'react';
-import { useRemoveStudentMutation, useStudentsQuery } from '../generated/graphql';
+import { useRemoveStudentMutation, useStudentsQuery, StudentsDocument } from '../generated/graphql';
 import Loading from './Loading';
 
 export const Students:React.FC = () => {
@@ -39,7 +39,10 @@ export const Students:React.FC = () => {
                                 await removeStudent({
                                     variables: {
                                         studentID: s.id
-                                    }
+                                    }, 
+                                    refetchQueries: [{
+                                        query: StudentsDocument
+                                    }]
                                 });
                             }}>Remove student</MenuItem>
                         </MenuList>

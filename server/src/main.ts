@@ -12,6 +12,7 @@ import { LecturerResolver } from './resolvers/lecturer';
 import { StudentResolver } from './resolvers/student';
 import { DegreeResolver } from './resolvers/degree';
 import { CourseResolver } from './resolvers/course';
+import { MeResolver } from "./resolvers/me";
 
 const app = express();
 const { PORT, CLIENT_URL } = process.env;
@@ -33,7 +34,8 @@ const main = async () => {
 						LecturerResolver,
 						StudentResolver,
 						DegreeResolver,
-						CourseResolver
+						CourseResolver,
+						MeResolver
 					],
 					validate: false,
 			}),
